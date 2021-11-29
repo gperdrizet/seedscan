@@ -17,5 +17,5 @@ Reboot and you should be able to use scanimage without sudo.
 ### Cron
 Scanns are triggered via a cron job. Add the following to the user's cronfile (i.e. **crontab -e**). A scan every 10 minutes seems like a good place to start, but this can be changed to fit the experiment.
 ```
-*/10 * * * * python3.7 /home/siderealyear/arkk/seedscan/scan.py
+*/10 * * * * python /path/to/seedscan/scan.py
 ```
