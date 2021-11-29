@@ -60,7 +60,7 @@ os.system(scan_command)
 # Rotate image 90 degrees to landscape if desired
 if config.LANDSCAPE == True:
     img = Image.open(output)
-    img = img.rotate(-90)
+    img = img.rotate(-90, expand=1)
     img.save(output)
 
 # Write the updated scan count
