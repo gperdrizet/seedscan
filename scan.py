@@ -18,6 +18,7 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.'''
 import subprocess
 import config
 import os.path
+from PIL import Image
 
 # First check to see what scan we are on - if we don't have
 # a scan number logged, assume it is the first scan and set
@@ -42,6 +43,7 @@ else:
 
 # Set up zero padded file name for new scan
 file_name = f'{scan_count:04}.{config.SCAN_FORMAT}'
+output = f'{config.SCAN_DIR}/{file_name}'
 
 # Construct scan command using parameters from config.py
 scan_command = " ".join([
@@ -49,11 +51,17 @@ scan_command = " ".join([
     f'--format={config.SCAN_FORMAT}',
     f'--resolution={config.RESOLUTION}',
     f'--mode={config.SCAN_MODE}',
-    f'>{config.SCAN_DIR}/{file_name}'
+    f'>{output}'
 ])
 
 # Do the scan
 os.system(scan_command)
+
+# Rotate image 90 degrees to landscape if desired
+if config.LANDSCAPE == True:
+    img = Image.open(output)
+    img = img.rotate(90)
+    img.save(output)
 
 # Write the updated scan count
 with open(config.SCAN_COUNT, 'w') as f:

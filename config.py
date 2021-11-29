@@ -27,3 +27,4 @@ SCAN_COUNT = f'{SCAN_DIR}/scan_count.txt'
 SCAN_FORMAT = 'jpeg'
 SCAN_MODE = 'Color'
 RESOLUTION = 600
+LANDSCAPE = True
