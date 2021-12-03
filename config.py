@@ -23,6 +23,7 @@ EXPERIMENT_NAME = 'pepper_test'
 
 SCAN_DIR = f'{BASE_PATH}/scans/{EXPERIMENT_NAME}'
 SCAN_COUNT = f'{SCAN_DIR}/scan_count.txt'
+SENSOR_DATA = f'{SCAN_DIR}/sensor_data.csv'
 
 SCAN_FORMAT = 'jpeg'
 SCAN_MODE = 'Color'

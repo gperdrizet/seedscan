@@ -18,7 +18,11 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.'''
 import subprocess
 import config
 import os.path
+import board
+import busio
 from PIL import Image
+from datetime import datetime
+from adafruit_ms8607 import MS8607
 
 # First check to see what scan we are on - if we don't have
 # a scan number logged, assume it is the first scan and set
@@ -40,6 +44,23 @@ else:
     # Since this is the first scan of the run, make the output
     # directory to hold the scans
     os.mkdir(config.SCAN_DIR)
+
+# Before doing the scan, read sensor data - the scan takes about
+# 2 minutes with my scanner and I worry that the light might raise
+# the temperature. Doing the sensor read just before the scan will
+# give a better idea about the conditions in the scanner over the
+# previous 10 minutes since the last scan.
+
+# Read sensors
+i2c = busio.I2C(board.SCL, board.SDA)
+sensor = MS8607(i2c)
+
+# Get current time
+scantime = datetime.now()
+
+# Write data to file
+with open(config.SENSOR_DATA, 'w') as f:
+    f.write(f'{scantime},{sensor.pressure},{sensor.temperature},{sensor.relative_humidity}')
 
 # Set up zero padded file name for new scan
 file_name = f'{scan_count:04}.{config.SCAN_FORMAT}'
