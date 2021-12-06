@@ -16,13 +16,28 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <https://www.gnu.org/licenses/>.'''
 
 import subprocess
-import config
 import os.path
+import argparse
 import board
 import busio
 from PIL import Image
 from datetime import datetime
 from adafruit_ms8607 import MS8607
+
+import config
+
+# Instantiate command line argument parser
+parser = argparse.ArgumentParser(description='Controls scanner and sesnors.')
+
+# Add arguments to specify whether or not to read sensor data
+parser.add_argument(
+    '--sensors', 
+    type=str, 
+    help='(True|False) Read sensor data.'
+)
+
+# Parse the args
+args = parser.parse_args()
 
 # First check to see what scan we are on - if we don't have
 # a scan number logged, assume it is the first scan and set
@@ -45,22 +60,27 @@ else:
     # directory to hold the scans
     os.mkdir(config.SCAN_DIR)
 
-# Before doing the scan, read sensor data - the scan takes about
-# 2 minutes with my scanner and I worry that the light might raise
-# the temperature. Doing the sensor read just before the scan will
-# give a better idea about the conditions in the scanner over the
-# previous 10 minutes since the last scan.
+    # Also, create the sensor data file and write the header
+    with open(config.SENSOR_DATA, 'w') as f:
+        f.write(f'scan_number,datetime,pressure_hPa,temp_C,rel_humidity\n')
 
-# Read sensors
-i2c = busio.I2C(board.SCL, board.SDA)
-sensor = MS8607(i2c)
+if args.sensors == True:
+    # Before doing the scan, read sensor data - the scan takes about
+    # 2 minutes with my scanner and I worry that the light might raise
+    # the temperature. Doing the sensor read just before the scan will
+    # give a better idea about the conditions in the scanner over the
+    # previous 10 minutes since the last scan.
 
-# Get current time
-scantime = datetime.now()
+    # Read sensors
+    i2c = busio.I2C(board.SCL, board.SDA)
+    sensor = MS8607(i2c)
 
-# Write data to file
-with open(config.SENSOR_DATA, 'w') as f:
-    f.write(f'{scantime},{sensor.pressure},{sensor.temperature},{sensor.relative_humidity}')
+    # Get current time
+    scantime = datetime.now()
+
+    # Write data to file
+    with open(config.SENSOR_DATA, 'a') as f:
+        f.write(f'{scan_count},{scantime},{sensor.pressure},{sensor.temperature},{sensor.relative_humidity}\n')
 
 # Set up zero padded file name for new scan
 file_name = f'{scan_count:04}.{config.SCAN_FORMAT}'
