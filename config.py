@@ -19,7 +19,7 @@ import os
 
 BASE_PATH = os.path.dirname(os.path.realpath(__file__))
 
-EXPERIMENT_NAME = 'pepper_test'
+EXPERIMENT_NAME = 'gamma_pubescens.1'
 
 SCAN_DIR = f'{BASE_PATH}/scans/{EXPERIMENT_NAME}'
 SCAN_COUNT = f'{SCAN_DIR}/scan_count.txt'
